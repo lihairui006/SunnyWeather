@@ -1,5 +1,6 @@
 package com.example.sunnyweather.ui.place
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sunnyweather.R
+import com.example.sunnyweather.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment: Fragment() {
@@ -31,6 +33,21 @@ class PlaceFragment: Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        //对存储的状态经行判断和读取
+        //如果当前已有存储的数据，就获取已存储的数据并解析成Place对象，然后使用它的经纬度坐标和城市名直接跳转
+        //传递给WeatherActivity
+        if(viewModel.isPlaceSaved()){
+            val place=viewModel.getSavePlace()
+            val intent= Intent(context,WeatherActivity::class.java).apply {
+                putExtra("location_lng",place.location.lng)
+                putExtra("location_lat",place.location.lat)
+                putExtra("place_name",place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
 
         //给RecyclerView设置了LayoutManager
         val layoutManager= LinearLayoutManager(activity)
